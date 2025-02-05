@@ -1,0 +1,34 @@
+kind: AIchorManifest
+apiVersion: 0.2.2
+
+builder:
+  image: tf-multi-jobs
+  context: tf-job # parallel-jobs-demo folder
+  dockerfile: ./Dockerfile
+  buildArgs:
+    USE_CUDA: "true"
+
+spec:
+  operator: tf
+  image: efficientnet
+  command: "python train.py"
+
+  tensorboard: # optional disabled by default
+    enabled: true
+
+  types:
+    Worker:
+      count: 1
+      resources:
+        cpus: 5
+        ramRatio: 2
+        shmSizeGB: 0
+        accelerators: # optional
+          gpu:
+            count: 0
+            # options: gpu, mig-1g.10gb, mig-3g.20gb, mig-3g.40gb,
+            type: gpu
+            # options: Tesla-V100-SXM3-32GB, A100-SXM4-40GB, A100-SXM-80GB
+            #product: A100-SXM4-80GB
+            product: nvidia-tesla-t4
+
