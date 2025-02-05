@@ -1,20 +1,37 @@
 kind: AIchorManifest
-apiVersion: 0.2.1
+apiVersion: 0.2.2
 
 builder:
-  image: tf-multi-jobs
-  context: parallel-jobs-demo # parallel-jobs-demo folder
+  image: raytune-pong
+  context: raytune-pong # raytune-pong folder
   dockerfile: ./Dockerfile
 
 spec:
-  operator: tf
-  image: tf-multi-jobs
-  command: "python -u src/main.py"
+  operator: kuberay
+  image: raytune-pong
+  command: "python main.py"
+
+  debug:
+    jupyter: false
+
+  tensorboard: # optional, disabled by default
+    enabled: true
 
   types:
-    Worker:
-      count: 5
+    Head:
       resources:
-        cpus: 1
-        ramRatio: 1
-        shmSizeGB: 0
+        cpus: 6
+        ramRatio: 6
+        accelerators: # optional
+          gpu:
+            count: 0
+            product: NVIDIA-A100-SXM4-40GB
+            type: gpu
+
+    Workers:
+      - name: cpu-workers
+        count: 2
+        resources:
+          cpus: 6
+          ramRatio: 2
+          shmSizeGB: 0
