@@ -2,31 +2,32 @@ kind: AIchorManifest
 apiVersion: 0.2.2
 
 builder:
-  image: image
-  context: smoke-test # smoke-test folder
-  dockerfile: ./build/ray.Dockerfile # need ray installed
+  image: tf-multi-jobs
+  context: tf-job # parallel-jobs-demo folder
+  dockerfile: ./Dockerfile/Dockerfile
+  buildArgs:
+    USE_CUDA: "true"
 
 spec:
-  operator: kuberay
-  image: image
-  command: "python3 -u main.py --operator=kuberay --sleep=300 --tb-write=True"
+  operator: tf
+  image: efficientnet
+  command: "python train.py"
 
-  debug:
-    jupyter: false
-
-  tensorboard:
+  tensorboard: # optional disabled by default
     enabled: true
 
   types:
-    Head:
+    Worker:
+      count: 1
       resources:
-        cpus: 1
+        cpus: 5
         ramRatio: 2
-
-    Workers:
-      - name: cpu-workers
-        count: 1
-        resources:
-          cpus: 1
-          ramRatio: 2
-          shmSizeGB: 0
+        shmSizeGB: 0
+        accelerators: # optional
+          gpu:
+            count: 0
+            # options: gpu, mig-1g.10gb, mig-3g.20gb, mig-3g.40gb,
+            type: gpu
+            # options: Tesla-V100-SXM3-32GB, A100-SXM4-40GB, A100-SXM-80GB
+            #product: A100-SXM4-80GB
+            product: nvidia-tesla-t4
