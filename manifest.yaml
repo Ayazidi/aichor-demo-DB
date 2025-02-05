@@ -22,7 +22,7 @@ spec:
         ramRatio: 4
         accelerators: # optional
           gpu:
-            count: 1
+            count: 0
             type: gpu
             product: nvidia-tesla-t4
     Worker:
@@ -32,7 +32,7 @@ spec:
         ramRatio: 4
         accelerators: # optional
           gpu:
-            count: 1
+            count: 0
             type: gpu
             product: nvidia-tesla-t4
 
