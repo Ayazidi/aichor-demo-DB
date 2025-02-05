@@ -4,10 +4,10 @@ apiVersion: 0.2.2
 builder:
   image: tf-multi-jobs
   context: tf-job # parallel-jobs-demo folder
-  dockerfile: ./Dockerfile/Dockerfile
+  dockerfile: ./Dockerfile
   buildArgs:
     USE_CUDA: "true"
- 
+
 spec:
   operator: tf
   image: efficientnet
