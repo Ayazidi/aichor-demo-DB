@@ -23,7 +23,7 @@ spec:
         cpus: 1
         ramRatio: 2
 
-    Workers:
+    Workers: 
       - name: cpu-workers
         count: 1
         resources:
