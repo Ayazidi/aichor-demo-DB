@@ -3,30 +3,25 @@ apiVersion: 0.2.2
 
 builder:
   image: image
-  context: smoke-test # smoke-test folder
-  dockerfile: ./build/ray.Dockerfile # need ray installed
+  context: hugging-face-accelerate # hugging-face-accelerate folder
+  dockerfile: ./Dockerfile
 
 spec:
-  operator: kuberay
+  operator: pytorch
   image: image
-  command: "python3 -u main.py --operator=kuberay --sleep=300 --tb-write=True"
-
-  debug:
-    jupyter: false
+  command: "env NCCL_P2P_DISABLE=\"1\" NCCL_IB_DISABLE=\"1\" torchrun --nproc_per_node 1 main.py --mixed_precision fp16 --model openai-community/gpt2" # --nproc_per_node=={Number of GPUs}
 
   tensorboard:
-    enabled: true 
+    enabled: true
 
   types:
-    Head:
+    Worker:
+      count: 1
       resources:
-        cpus: 1
-        ramRatio: 2
-
-    Workers: 
-      - name: cpu-workers
-        count: 1
-        resources:
-          cpus: 1 
-          ramRatio: 2
-          shmSizeGB: 0
+        cpus: 4
+        ramRatio: 16 # 32GB
+        accelerators: # optional
+          gpu:
+            count: 1
+            type: gpu
+            product: a10g
